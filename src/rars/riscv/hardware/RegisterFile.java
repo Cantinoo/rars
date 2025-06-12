@@ -167,8 +167,13 @@ public class RegisterFile {
 
     public static void initializeProgramCounter(boolean startAtMain) {
         int mainAddr = Globals.symbolTable.getAddress(SymbolTable.getStartLabel());
+        // pointless, only gives the adress of the main label
+        System.out.println(" MAIN ADRESS : " + String.format("%x", mainAddr));
         if (startAtMain && mainAddr != SymbolTable.NOT_FOUND && Memory.inTextSegment(mainAddr)) {
             initializeProgramCounter(mainAddr);
+            // purely for tests ATM
+            updateRegister(1, 10);
+            System.out.println("test 12 12");
         } else {
             initializeProgramCounter((int)programCounter.getResetValue());
         }

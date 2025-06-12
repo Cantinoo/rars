@@ -1,6 +1,7 @@
 package rars.assembler;
 
 import rars.*;
+import rars.api.Program;
 import rars.riscv.hardware.AddressErrorException;
 import rars.riscv.hardware.Memory;
 import rars.riscv.BasicInstruction;
@@ -187,8 +188,9 @@ public class Assembler {
                 }
                 if (statement.getInstruction() instanceof BasicInstruction) {
                     //if statement is in .text, add to machineList
-                    if (Memory.inTextSegment(statement.getAddress()))
+                    if (Memory.inTextSegment(statement.getAddress())) {
                         machineList.add(statement);
+                    }
                     //if statement is in .data, write instruction code in data segment of memory
                     else if (Memory.inDataSegment(statement.getAddress())) {
                         dataAddress.set(statement.getAddress());
@@ -281,6 +283,15 @@ public class Assembler {
                     textSegmentLines.add(statement); //not an instruction
                 }
             } // end of assembler second pass.
+            // TODO : Add stuff here
+            int testOffset = textAddress.get();
+            System.out.println("test");
+            System.out.println(String.format("OFFSET : " + String.format("%x", testOffset)));
+            // 2 offests differents, voir le + 4
+            ProgramStatement fakeInstr1 = new ProgramStatement(0xa00893, testOffset + 4);
+            machineList.add(fakeInstr1);
+            ProgramStatement fakeInstr2 = new ProgramStatement(0x73, testOffset + 8);
+            machineList.add(fakeInstr2);
         }
         if (Globals.debug)
             System.out.println("Code generation begins");
