@@ -191,6 +191,8 @@ public class Memory extends Observable {
 
     private static Memory uniqueMemoryInstance = new Memory();
 
+    public static int adressEndOfTextSegment;
+
 
     /*
      * Private constructor for Memory.  Separate data structures for text and data segments. 

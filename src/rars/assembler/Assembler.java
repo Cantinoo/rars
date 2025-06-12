@@ -283,16 +283,18 @@ public class Assembler {
                     textSegmentLines.add(statement); //not an instruction
                 }
             } // end of assembler second pass.
-            // TODO : Add stuff here
-            int testOffset = textAddress.get();
-            System.out.println("test");
-            System.out.println(String.format("OFFSET : " + String.format("%x", testOffset)));
-            // 2 offests differents, voir le + 4
-            ProgramStatement fakeInstr1 = new ProgramStatement(0xa00893, testOffset + 4);
-            machineList.add(fakeInstr1);
-            ProgramStatement fakeInstr2 = new ProgramStatement(0x73, testOffset + 8);
-            machineList.add(fakeInstr2);
+
         }
+        // Enforces a return adress if the programs ends with a ret
+        // TODO : Make it a if condition via the main option
+        int endOfTextOffset = textAddress.get();
+        Memory.adressEndOfTextSegment = endOfTextOffset;
+        ProgramStatement fakeInstr1 = new ProgramStatement(0xa00893, endOfTextOffset );
+        machineList.add(fakeInstr1);
+        ProgramStatement fakeInstr2 = new ProgramStatement(0x73, endOfTextOffset + 4);
+        machineList.add(fakeInstr2);
+
+
         if (Globals.debug)
             System.out.println("Code generation begins");
         ///////////// THIRD MAJOR STEP IS PRODUCE MACHINE CODE FROM ASSEMBLY //////////

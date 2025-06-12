@@ -172,7 +172,7 @@ public class RegisterFile {
         if (startAtMain && mainAddr != SymbolTable.NOT_FOUND && Memory.inTextSegment(mainAddr)) {
             initializeProgramCounter(mainAddr);
             // purely for tests ATM
-            updateRegister(1, 10);
+            updateRegister(1, Memory.adressEndOfTextSegment);
             System.out.println("test 12 12");
         } else {
             initializeProgramCounter((int)programCounter.getResetValue());
