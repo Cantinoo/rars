@@ -1,7 +1,6 @@
 package rars.assembler;
 
 import rars.*;
-import rars.api.Program;
 import rars.riscv.hardware.AddressErrorException;
 import rars.riscv.hardware.Memory;
 import rars.riscv.BasicInstruction;
@@ -285,15 +284,16 @@ public class Assembler {
             } // end of assembler second pass.
 
         }
-        // Enforces a return adress if the programs ends with a ret
-        // TODO : Make it a if condition via the main option
-        int endOfTextOffset = textAddress.get();
-        Memory.adressEndOfTextSegment = endOfTextOffset;
-        ProgramStatement fakeInstr1 = new ProgramStatement(0xa00893, endOfTextOffset );
-        machineList.add(fakeInstr1);
-        ProgramStatement fakeInstr2 = new ProgramStatement(0x73, endOfTextOffset + 4);
-        machineList.add(fakeInstr2);
-
+        // if the setting START AT MAIN is checked, we simulate a fake text segment
+        // and allow the user to put "ret" in main to emulate a compiled code.
+        if (Globals.getSettings().getBooleanSetting(Settings.Bool.START_AT_MAIN)) {
+            int endOfTextOffset = textAddress.get();
+            Memory.addressEndOfTextSegment = endOfTextOffset;
+            ProgramStatement fakeInstr1 = new ProgramStatement(0xa00893, endOfTextOffset );
+            machineList.add(fakeInstr1);
+            ProgramStatement fakeInstr2 = new ProgramStatement(0x73, endOfTextOffset + 4);
+            machineList.add(fakeInstr2);
+        }
 
         if (Globals.debug)
             System.out.println("Code generation begins");
