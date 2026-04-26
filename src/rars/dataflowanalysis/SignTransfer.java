@@ -4,9 +4,9 @@ import rars.ProgramStatement;
 import rars.riscv.Instruction;
 
 /**
- * Transfer function for the sign analysis.
- * Based on the instruction type, it modifies the sign state to the
- * expected sign.
+ * Defines the transfer function for the sign analysis.
+ * Based on the instruction type, it modifies the sign state 
+ * to the expected sign.
  * ie, an "ADD" instruction is encountered with
  * t0 = t1 + t2
  * t1 = POS
