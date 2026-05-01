@@ -1,4 +1,4 @@
-package rars.dataflow;
+package rars.dataflowanalysis;
 
 import rars.ProgramStatement;
 import rars.riscv.Instruction;

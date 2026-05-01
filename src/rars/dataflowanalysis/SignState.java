@@ -1,4 +1,4 @@
-package rars.dataflow;
+package rars.dataflowanalysis;
 
 import java.util.Arrays;
 

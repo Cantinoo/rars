@@ -1,6 +1,7 @@
 package rars;
 
 import rars.api.Program;
+import rars.dataflowanalysis.DataFlowRunner;
 import rars.riscv.InstructionSet;
 import rars.riscv.dump.DumpFormat;
 import rars.riscv.dump.DumpFormatLoader;
@@ -81,6 +82,7 @@ public class Launch {
     private Options options;
     private boolean gui;
     private boolean simulate;
+    private boolean dataflow; // -df flag: generate dataflow DDG
     private boolean rv64;
     private int displayFormat;
     private boolean verbose;  // display register name or address along with contents
@@ -116,6 +118,7 @@ public class Launch {
         assembleProject = false;
         countInstructions = false;
         instructionCount = 0;
+        dataflow = false;
         assembleErrorExitCode = 1;
         simulateErrorExitCode = 2;
         maxStepsErrorExitCode = 3;
@@ -134,8 +137,12 @@ public class Launch {
         } else { // running from command line.
             // assure command mode works in headless environment (generates exception if not)
             System.setProperty("java.awt.headless", "true");
-            
-            dumpSegments(runCommand());
+
+            if (dataflow) {
+                runDataflow();
+            } else {
+                dumpSegments(runCommand());
+            }
             System.exit(Globals.exitCode);
         }
     }
@@ -196,7 +203,29 @@ public class Launch {
     }
 
 
-    /////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////
+    // Run the dataflow (sign analysis + DDG) pipeline and emit a .dot file.
+
+    private void runDataflow() {
+        if (filenameList.isEmpty()) {
+            out.println("df: no input file specified.");
+            Globals.exitCode = 1;
+            return;
+        }
+
+        Globals.getSettings().setBooleanSettingNonPersistent(Settings.Bool.RV64_ENABLED, rv64);
+        rars.riscv.InstructionSet.rv64 = rv64;
+        Globals.instructionSet.populate();
+
+        String sourceFile = new File(filenameList.get(0)).getAbsolutePath();
+        String dotFile = DataFlowRunner.defaultDotPath(filenameList.get(0));
+
+        boolean ok = DataFlowRunner.run(sourceFile, dotFile, out);
+        if (!ok) Globals.exitCode = 1;
+    }
+
+
+    //////////////////////////////////////////////////////////////////////
     // There are no command arguments, so run in interactive mode by
     // launching the GUI-fronted integrated development environment.
 
@@ -312,6 +341,11 @@ public class Launch {
                 } catch (NumberFormatException nfe) {
                     // Let it fall thru and get handled by catch-all
                 }
+            }
+            if (args[i].toLowerCase().equals("df")) {
+                dataflow = true;
+                simulate = false;
+                continue;
             }
             if (args[i].toLowerCase().equals("d")) {
                 Globals.debug = true;
@@ -679,6 +713,8 @@ public class Launch {
         out.println("  Valid options (not case sensitive, separate by spaces) are:");
         out.println("      a  -- assemble only, do not simulate");
         out.println("  ae<n>  -- terminate RARS with integer exit code <n> if an assemble error occurs.");
+        out.println("     df  -- generate a dataflow dependence graph (DDG) with sign analysis");
+        out.println("            and write it as a .dot file in the current directory.");
         out.println("  ascii  -- display memory or register contents interpreted as ASCII codes.");
         out.println("      b  -- brief - do not display register/memory address along with contents");
         out.println("      d  -- display RARS debugging statements");
@@ -725,5 +761,3 @@ public class Launch {
     }
 
 }
-
-   	

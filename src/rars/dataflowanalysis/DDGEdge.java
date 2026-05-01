@@ -1,4 +1,4 @@
-package rars.dataflow;
+package rars.dataflowanalysis;
 
 /**
  * Defines the dependancies between instructions 
@@ -25,6 +25,6 @@ public class DDGEdge {
     }
 
     public String dotLabel() {
-        return "x" + register + " (" + sign + ")";
+        return DDGNode.abiName(register) + " (" + sign + ")";
     }
 }

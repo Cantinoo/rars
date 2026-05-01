@@ -1,4 +1,4 @@
-package rars.dataflow
+package rars.dataflowanalysis;
 
 /**
  * Seven element sign lattice for my dataflow implementation

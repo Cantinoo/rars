@@ -1,4 +1,4 @@
-package rars.dataflow;
+package rars.dataflowanalysis;
 
 import rars.ProgramStatement;
 import rars.riscv.Instruction;
@@ -127,6 +127,7 @@ public class DDGBuilder {
             int[] srcs = sourceRegisters(stmt);
             for (int src : srcs) {
                 if (src <= 0 || src >= SignState.NUM_REGS) continue;
+                if (src == 17) continue; // I decided to skip over a7 because it is a SYSCALL register
                 int defIdx = reachIn[i][src];
                 if (defIdx == -1) continue; 
                 if (defIdx == -2) {

@@ -1,6 +1,7 @@
 out
 .idea
 *.class
+*.dot
 
 # Build products
 build
